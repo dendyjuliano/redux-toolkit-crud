@@ -17,7 +17,9 @@ export const jokesApi = createApi({
   tagTypes: ["Post"],
   endpoints: (builder) => ({
     getPost: builder.query({
-      query: () => `posts`,
+      query: ({ order }) => {
+        return `posts?_sort=id&_order=${order}`;
+      },
       providesTags: (result) => providesList(result, "Post"),
     }),
     getOnePost: builder.mutation({
@@ -26,6 +28,14 @@ export const jokesApi = createApi({
         method: "GET",
       }),
       providesTags: (result, error, id) => [{ type: "Post", id }],
+    }),
+    createPost: builder.mutation({
+      query: ({ ...body }) => ({
+        url: `posts`,
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Post", id }],
     }),
     updatePost: builder.mutation({
       query: ({ id, ...body }) => ({
@@ -47,6 +57,7 @@ export const jokesApi = createApi({
 
 export const {
   useGetPostQuery,
+  useCreatePostMutation,
   useDeletePostMutation,
   useGetOnePostMutation,
   useUpdatePostMutation,
