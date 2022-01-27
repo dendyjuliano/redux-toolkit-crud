@@ -20,23 +20,12 @@ const PostData = () => {
   const { data, error, isLoading } = useGetPostQuery({
     filterTitle,
   });
-  const { data: postOne, isLoading: isLoadingOne } = useGetOnePostQuery(id, {
+  const { data: postOne } = useGetOnePostQuery(id, {
     skip,
   });
-  const [deletePost, { isLoading: isDeleting, isSuccess: isDeleted }] =
-    useDeletePostMutation();
-  const [
-    updatePost,
-    {
-      isLoading: isLoadingUpdate,
-      isSuccess: isSuccessPost,
-      error: errorUpdate,
-    },
-  ] = useUpdatePostMutation();
-  const [
-    createPost,
-    { isLoading: isLoadingCreate, isSuccess, error: errorCreate },
-  ] = useCreatePostMutation();
+  const [deletePost, { isLoading: isDeleting }] = useDeletePostMutation();
+  const [updatePost, { isLoading: isLoadingUpdate }] = useUpdatePostMutation();
+  const [createPost, { isLoading: isLoadingCreate }] = useCreatePostMutation();
 
   const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
