@@ -1,11 +1,6 @@
 {
   "posts": [
     {
-      "title": "Data 1",
-      "body": "Body 1",
-      "id": 10
-    },
-    {
       "title": "Data 2",
       "body": "Body 2",
       "id": 12
@@ -535,41 +530,6 @@
       "id": 100,
       "title": "at nam consequatur ea labore ea harum",
       "body": "cupiditate quo est a modi nesciunt soluta\nipsa voluptas error itaque dicta in\nautem qui minus magnam et distinctio eum\naccusamus ratione error aut"
-    },
-    {
-      "title": "Title Firstfdsafas",
-      "body": "fdsafsad",
-      "id": 101
-    },
-    {
-      "title": "Title Firstfdsafas",
-      "body": "fdsafsad",
-      "id": 102
-    },
-    {
-      "title": "Title Firstfdsafas",
-      "body": "fdsafsad",
-      "id": 103
-    },
-    {
-      "title": "New title",
-      "body": "body title",
-      "id": 104
-    },
-    {
-      "title": "fdsadfas",
-      "body": "fdasfdas",
-      "id": 105
-    },
-    {
-      "title": "Data Baru",
-      "body": "Body baru",
-      "id": 106
-    },
-    {
-      "title": "Data Baru 4",
-      "body": "bodyfdsalfsa",
-      "id": 107
     }
   ]
 }

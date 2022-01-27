@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   useGetPostQuery,
   useCreatePostMutation,
-  useGetOnePostMutation,
+  useGetOnePostQuery,
   useDeletePostMutation,
   useUpdatePostMutation,
 } from "../redux/action/postAction";
@@ -10,14 +10,19 @@ import { useSelector, useDispatch } from "react-redux";
 import { decrement, increment } from "../redux/counter/counterSlice";
 
 import { Modal, Button, Table, Container, Form } from "react-bootstrap";
+import Swal from "sweetalert2";
 
 const PostData = () => {
-  const [filterOrder, setFilterOrder] = useState("desc");
+  const [filterTitle, setFilterTitle] = useState("");
+  const [skip, setSkip] = useState(true);
+  const [id, setId] = useState(null);
+
   const { data, error, isLoading } = useGetPostQuery({
-    order: filterOrder,
+    filterTitle,
   });
-  const [getOnePost, { data: postOne, isLoading: isLoadingOne }] =
-    useGetOnePostMutation();
+  const { data: postOne, isLoading: isLoadingOne } = useGetOnePostQuery(id, {
+    skip,
+  });
   const [deletePost, { isLoading: isDeleting, isSuccess: isDeleted }] =
     useDeletePostMutation();
   const [
@@ -49,9 +54,26 @@ const PostData = () => {
     }
   }, [postOne]);
 
+  useEffect(() => {
+    if (isLoading || isDeleting || isLoadingUpdate || isLoadingCreate) {
+      Swal.fire({
+        title: "Being processed",
+        html: "Please wait a moment.",
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+    } else {
+      Swal.hideLoading();
+      Swal.close();
+    }
+  }, [isLoading, isDeleting, isLoadingUpdate, isLoadingCreate]);
+
   const handleDeletePost = (idPost) => {
     let confirmAction = window.confirm("Yakin di delete ?");
     if (confirmAction) {
+      setSkip(false);
+
       deletePost(idPost)
         .then(() => {})
         .catch((err) => console.log("ada error", err));
@@ -59,8 +81,16 @@ const PostData = () => {
   };
 
   const handleModal = (id) => {
-    getOnePost(id);
+    setId(id);
+    setSkip(false);
     setModalStatus(true);
+  };
+  const handleModalClose = () => {
+    setId(null);
+    setSkip(true);
+    setTitle("");
+    setBody("");
+    setModalStatus(false);
   };
 
   const handleSubmit = async (e) => {
@@ -71,6 +101,8 @@ const PostData = () => {
     };
     await createPost(data).unwrap();
     setModalTambah(false);
+    setTitle("");
+    setBody("");
   };
 
   const handleSubmitUpdate = (e) => {
@@ -82,25 +114,18 @@ const PostData = () => {
     };
     updatePost(data);
     setModalStatus(false);
+    setTitle("");
+    setBody("");
   };
 
   return (
     <>
-      {isLoading && <h1>Loading</h1>}
       {error && <h1>{error}</h1>}
       <Container>
         <div className="d-flex justify-content-between mt-3">
-          <h1>Data Post {filterOrder}</h1>
+          <h1>Data Post by {filterTitle}</h1>
           <Button variant="primary" onClick={() => setModalTambah(true)}>
             Add Post
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() =>
-              setFilterOrder(filterOrder === "asc" ? "desc" : "asc")
-            }
-          >
-            Filter
           </Button>
         </div>
         <div className="d-flex flex-row">
@@ -121,6 +146,14 @@ const PostData = () => {
       </Container>
 
       <Container className="mt-5">
+        <div className="w-25">
+          <Form.Control
+            type="text"
+            placeholder="Enter Title"
+            value={filterTitle}
+            onChange={(e) => setFilterTitle(e.target.value)}
+          />
+        </div>
         <Table striped>
           <thead>
             <tr>
@@ -158,7 +191,7 @@ const PostData = () => {
         </Table>
       </Container>
 
-      <Modal show={modalStatus} onHide={() => setModalStatus(false)}>
+      <Modal show={modalStatus} onHide={() => handleModalClose()}>
         <Form onSubmit={handleSubmitUpdate}>
           <Modal.Header closeButton>
             <Modal.Title>{postOne?.title}</Modal.Title>
@@ -184,7 +217,7 @@ const PostData = () => {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setModalStatus(false)}>
+            <Button variant="secondary" onClick={() => handleModalClose()}>
               Close
             </Button>
             <Button variant="primary" type="submit">

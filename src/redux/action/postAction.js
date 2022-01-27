@@ -12,21 +12,16 @@ const providesList = (resultsWithIds, tagType) => {
 export const jokesApi = createApi({
   reducerPath: "jokesApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3002/",
+    baseUrl: "https://61f245ce2219930017f50442.mockapi.io/",
   }),
   tagTypes: ["Post"],
   endpoints: (builder) => ({
     getPost: builder.query({
-      query: ({ order }) => {
-        return `posts?_sort=id&_order=${order}`;
-      },
+      query: ({ filterTitle }) => `posts?title=${filterTitle}`,
       providesTags: (result) => providesList(result, "Post"),
     }),
-    getOnePost: builder.mutation({
-      query: (id) => ({
-        url: `posts/${id}`,
-        method: "GET",
-      }),
+    getOnePost: builder.query({
+      query: (id) => `posts/${id}`,
       providesTags: (result, error, id) => [{ type: "Post", id }],
     }),
     createPost: builder.mutation({
@@ -59,6 +54,6 @@ export const {
   useGetPostQuery,
   useCreatePostMutation,
   useDeletePostMutation,
-  useGetOnePostMutation,
+  useGetOnePostQuery,
   useUpdatePostMutation,
 } = jokesApi;
